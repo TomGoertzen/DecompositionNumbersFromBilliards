@@ -1,0 +1,18 @@
+Lievis by Joel Gibson
+
+Website: https://www.jgibson.id.au/lievis/
+Repository: https://github.com/joelgibson/lievis
+
+This site's typography, palette, layout and interaction design follow Lievis.
+The KaTeX distribution and four body/UI font files were obtained from the local
+Lievis source tree. Those third-party files retain their own upstream licences.
+Lievis's TypeScript library and Svelte components are not bundled or imported
+by this review website.
+
+No explicit licence for Lievis-specific code was found in the local checkout
+or the checked repository on 14 November 2026. This attribution is not a grant
+of permission. Permission for any adapted Lievis-specific source should be
+clarified with Joel Gibson before publication.
+
+The upstream README has not been redistributed in this clean copy because its
+redistribution terms were not established.

@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Billiards visualisations</title>
+  <link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css?v=review-20261114">
+  <script src="assets/vendor/katex/katex.min.js" defer></script>
+  <script src="assets/vendor/katex/contrib/auto-render.min.js" defer></script>
+  <script src="data/billiards_base_characters.js?v=provenance-20261114" defer></script>
+  <script src="assets/js/range.js?v=review-20261114" defer></script>
+</head>
+<body>
+  <main>
+    <nav id="top-bar">
+      <ul>
+        <li>Billiards visualisations</li>
+        <li>Tom Goertzen and Maxwell Liu</li>
+      </ul>
+    </nav>
+
+    <header>
+      <h1>Billiards visualisations</h1>
+      <p>
+        Interactive visualisations for the Billiards conjecture and its use in
+        computing three-row decomposition numbers.
+      </p>
+      <div id="introduction">
+        <h2>Introduction</h2>
+        <p>
+          A long-standing open problem in modular representation theory is to understand the decomposition numbers of symmetric groups.
+          For a partition \(\lambda\) of \(n\), the Specht module \(S^\lambda\) is irreducible in characteristic zero.
+          The decomposition number \(d_{\lambda,\mu}=[S^\lambda:D^\mu]\) is the multiplicity of the simple module
+          \(D^\mu\) as a composition factor in the reduction of \(S^\lambda\) modulo \(p\), where \(\mu\) is a \(p\)-regular partition of \(n\).
+
+          Results of Donkin <a class="citation" href="#ref-d">[D]</a> and
+          Erdmann <a class="citation" href="#ref-e">[E, &sect;1.4]</a> identify these numbers
+          with Weyl-filtration multiplicities in tilting modules:
+        </p>
+
+        <div class="character-formula">
+          \[
+            d_{\lambda,\mu}=[T_{GL_r}(\mu):\Delta_{GL_r}(\lambda)],
+          \]
+        </div>
+        <p>provided both partitions have at most \(r\) parts.
+          We focus on partitions with at most three rows, corresponding to polynomial representations of \(GL_3\).
+          On restriction to \(SL_3\), a partition \(\lambda=(\lambda_1,\lambda_2,\lambda_3)\) determines the dominant weight
+        </p>
+
+        <div class="character-formula">
+          \[
+            (\lambda_1-\lambda_2)\omega_1+(\lambda_2-\lambda_3)\omega_2.
+          \]
+        </div>
+
+        <p>Riche and Williamson <a class="citation" href="#ref-rw15">[RW15]</a> relate tilting characters
+          to the antispherical  \(p\)-Kazhdan--Lusztig polynomial \({}^p{n}_{y,x}\). In regular blocks, we have
+        </p>
+
+        <div class="character-formula">
+          \[
+            [T(w\cdot_p\lambda_0):\Delta(y\cdot_p\lambda_0)]={}^p n_{y,w}(1),
+          \]
+        </div>
+
+        <p>where \(\lambda_0\) is a regular weight in the fundamental \(p\)-alcove. Below, we explain how to deduce many decomposition numbers from this equation.
+
+          Motivated by extensive computations, Lusztig and Williamson <a class="citation" href="#ref-lw">[LW]</a>
+          proposed the Billiards conjecture, a discrete dynamical algorithm governed by local rules that predicts
+          certain wall \(p\)-canonical basis elements in type \(A_2\).
+          After further computations of \(p\)-canonical basis elements, Jensen <a class="citation" href="#ref-j">[J]</a> subsequently corrected one of the local rules (merging rule).
+          Computer programs for \(p\)-canonical basis elements and the underlying theory that led to this revised conjecture can be found in
+          <a class="citation" href="#ref-asloc">[ASLoc]</a> and <a class="citation" href="#ref-gjw23">[GJW23]</a>.
+          We have used these programs to test selected computations on this page.
+
+          Below we illustrate the corrected conjecture and the range of tilting characters and decomposition numbers
+          accessible using its predictions. The content of the page is largely based on the Honours thesis of Maxwell Liu <a class="citation" href="#ref-liu">[Liu]</a> and the references therein.
+        </p>
+      </div>
+    </header>
+
+    <article>
+      <section class="visualisation-section" id="range-section">
+        <h2>Range of the Billiards input</h2>
+
+        <p>
+          Let \(W\) and \(W_f\) be the affine and finite Weyl group of \(SL_3\) respectively,
+          \({}^f W\) be minimal-coset representatives for \(W_f \backslash W\),
+          and \({}^p \underline{N}_x\) and \(N_x\) be \(p\)-canonical and standard basis elements of the antispherical module
+          associated with \(SL_3\), where \(x \in {}^f W\). We can represent
+
+          \[{}^p \underline{N}_x = \sum_{y \in {}^f W} {}^p n_{y, x} N_y\]
+
+          denoting \({}^p n_{y, x} \) as antispherical \(p\)-Kazhdan-Lusztig polynomials.
+        </p>
+
+        <p>
+          
+          Now, let \(T(\lambda), \Delta(\lambda)\) be the tilting and Weyl characters 
+          associated with a dominant weight \(\lambda\) of \(SL_3\) respectively.
+          If \(\lambda_0\) is a regular weight in the fundamental \(p\)-alcove and \(w, y \in {}^f W\),
+          Riche-Williamson <a class="citation" href="#ref-rw15">[RW15]</a> states
+
+          \[[T(w \cdot_p \lambda_0): \Delta(y \cdot_p \lambda_0)] = {}^{p}n_{y, w}(1).\]
+
+          In other words, we can find the decomposition numbers of Weyl modules in tilting modules in terms
+          of the corresponding coefficients of the \(p\)-canonical basis.
+
+          Moreover, as Weyl characters can be fully calculated for \(SL_3\),
+          this allows us to use \(p\)-canonical basis elements to calculate tilting characters
+          within corresponding alcoves.
+        </p>
+
+        <p>
+          The billiards conjecture <a class="citation" href="#ref-lw">[LW]</a>
+          calculates conjectural \(p\)-canonical basis elements
+          of the anti-spherical module associated with \(SL_3\) for certain alcoves on the wall. 
+          Precisely, it computes \({}^p \underline{N}_{x_i}\) for \(0 \leq i < 2p(p+1)\), 
+          where \(x_i\) corresponds to the \((i+1)\)th alcove on the wall of the dominant weight lattice. 
+          It thus also provides tilting characters on the wall of the dominant weight lattice in a certain range.
+          Our cached ASLoc checks agree for \(p=3\), \(i=0,\ldots,23\); \(p=5\), \(i=0,\ldots,59\); and \(p=7\), \(i=0,\ldots,30\).
+        </p>
+
+        <p>
+          The visualisation below displays all weights that we can find conjectural tilting characters for
+          using the wall data provided by the billiards conjecture.
+          A point \((a,b)\) in the triangular lattice represents the dominant
+          \(SL_3\) weight \(a\omega_1+b\omega_2\). 
+          Green points use terminal Billiards wall data inside the expected range
+          \(i &lt; 2p(p+1)\); orange points use wall data after that cutoff
+          and thus cannot solely be calculated using the billiards conjecture.
+        </p>
+
+        <div class="range-layout">
+          <figure class="visualisation-frame">
+            <div class="range-canvas-stack">
+              <canvas id="range-canvas" width="1100" height="820"></canvas>
+              <canvas id="range-hover-canvas" class="range-hover-overlay" width="1100" height="820" aria-hidden="true"></canvas>
+            </div>
+            <figcaption id="range-caption"></figcaption>
+          </figure>
+
+          <aside class="controls" aria-label="Range visualisation controls">
+            <label>
+              Prime \(p\)
+              <select id="prime-select">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+                <option value="13">13</option>
+              </select>
+            </label>
+
+            <label>
+              Initial view
+              <select id="window-select">
+                <option value="local">local square</option>
+                <option value="strips">terminal strips</option>
+                <option value="square">complete square</option>
+              </select>
+            </label>
+
+            <label>
+              Reset-view coordinate for large windows
+              <input id="max-coordinate" type="range" min="12" max="2000" value="120">
+              <input id="max-coordinate-number" type="number" min="1" max="10000" step="1" value="120">
+            </label>
+
+            <label>
+              Dot size
+              <input id="dot-size" type="range" min="1" max="8" value="3">
+              <span id="dot-size-value">3</span>
+            </label>
+
+            <label class="check-row">
+              <input id="show-weight-grid" type="checkbox" checked>
+              <span>weight lattice grid</span>
+            </label>
+
+            <label class="check-row">
+              <input id="show-alcoves" type="checkbox" checked>
+              <span>\(p\)-alcove walls</span>
+            </label>
+
+            <label class="check-row">
+              <input id="show-shifted-box" type="checkbox" checked>
+              <span>shifted box</span>
+            </label>
+
+            <label class="check-row">
+              <input id="show-axis-labels" type="checkbox">
+              <span>axis labels</span>
+            </label>
+
+            <button id="reset-view" type="button">Reset view</button>
+
+            <p class="control-warning is-hidden" id="range-warning"></p>
+          </aside>
+        </div>
+
+        <div class="legend" id="range-legend"></div>
+
+        <section class="method-note">
+          <h3>How this picture is computed</h3>
+          <p>
+            To recursively compute tilting characters, we use the Donkin tensor product theorem 
+            to construct tilting modules of higher weights. In order to construct all tilting modules, 
+            we need to know all tilting characters in the shifted box \((p-1)\rho+X_{&lt;p}\) and on the walls of the dominant lattice.
+            As the billiards conjecture only calculates conjectural wall \(p\)-canonical basis elements in a given range,
+            the tilting characters we can recursively compute are thus limited.
+          </p>
+          <p>
+            For a fixed \(p\), the above visualisation classifies dominant \(SL_3\)
+            weights \((a,b)\). The purple square is the shifted box
+            \((p-1)\rho+X_{&lt;p}\), namely \(p-1\leq a,b\leq 2p-2\).
+            The dark blue points are elementary bottom-alcove, first-adjacent
+            alcove, and Steinberg cases. If \(a,b\geq p-1\), we apply
+            the Donkin reduction
+            \[
+              (a,b)=(p-1+r_1,p-1+r_2)+p(a',b')
+            \]
+            and recursively classify \((a',b')\). 
+          </p>
+
+          <p>
+            This recursion terminates in a shifted-box, elementary, or terminal wall-strip case.
+            Translation reduces the remaining wall-strip cases to wall input; every required index must satisfy \(i&lt;2p(p+1)\).
+            The colours describe this mathematical reduction range.
+          </p>
+        </section>
+      </section>
+
+      <section class="visualisation-section" id="tilting-section">
+        <h2>Tilting reduction route</h2>
+        <p>
+          Move over a dominant weight \((a,b)\) to show how to recursively compute \(T(a,b)\).
+          This picture shows intermediate steps of the recursion 
+          and terminates within the shifted box and the billiards wall data.
+        </p>
+
+        <div class="range-layout">
+          <figure class="visualisation-frame">
+            <canvas id="tilting-canvas" width="1100" height="760"></canvas>
+            <figcaption id="tilting-caption">
+              Move over a lattice point to preview a computation.
+            </figcaption>
+          </figure>
+
+          <aside class="controls" aria-label="Tilting visualisation controls">
+            <label>
+              Prime \(p\)
+              <select id="tilting-prime-select">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+                <option value="13">13</option>
+              </select>
+            </label>
+
+            <label>
+              Reset-view coordinate
+              <input id="tilting-max-coordinate" type="range" min="12" max="260" value="60">
+              <input id="tilting-max-coordinate-number" type="number" min="1" max="2000" step="1" value="60">
+            </label>
+
+            <label>
+              Route circle size
+              <input id="tilting-step-circle-size" type="range" min="4" max="12" value="7">
+              <span id="tilting-step-circle-size-value">7</span>
+            </label>
+
+            <label class="check-row">
+              <input id="tilting-show-weight-grid" type="checkbox" checked>
+              <span>weight lattice grid</span>
+            </label>
+
+            <label class="check-row">
+              <input id="tilting-show-alcoves" type="checkbox" checked>
+              <span>\(p\)-alcove walls</span>
+            </label>
+
+            <label class="check-row">
+              <input id="tilting-show-shifted-box" type="checkbox" checked>
+              <span>shifted box</span>
+            </label>
+
+            <label class="check-row">
+              <input id="tilting-show-step-labels" type="checkbox">
+              <span>step numbers</span>
+            </label>
+
+            <button id="tilting-reset-view" type="button">Reset view</button>
+          </aside>
+        </div>
+
+        <div class="tilting-details" id="tilting-details">
+          Move over a weight in the picture.
+        </div>
+      </section>
+
+      <section class="visualisation-section" id="character-section">
+        <h2>Tilting character Weyl summands</h2>
+        <p>
+          Move over a dominant weight \((a,b)\) to calculate the Weyl-filtration
+          character of \(T(a,b)\) from the bundled base data and browser-side recursion.
+          Non-zero
+          summands \(\Delta(x,y)\) are drawn as larger points; coefficient
+          labels are optional.
+        </p>
+
+        <div class="range-layout">
+          <figure class="visualisation-frame">
+            <div class="range-canvas-stack">
+              <canvas id="character-canvas" width="1100" height="760"></canvas>
+              <canvas id="character-hover-canvas" class="range-hover-overlay" width="1100" height="760" aria-hidden="true"></canvas>
+            </div>
+            <figcaption id="character-caption">
+              Move over a lattice point to preview a tilting character.
+            </figcaption>
+          </figure>
+
+          <aside class="controls" aria-label="Tilting character visualisation controls">
+            <label>
+              Prime \(p\)
+              <select id="character-prime-select">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+                <option value="13">13</option>
+              </select>
+            </label>
+
+            <label>
+              Reset-view coordinate
+              <input id="character-max-coordinate" type="range" min="12" max="2000" value="18">
+              <input id="character-max-coordinate-number" type="number" min="1" max="10000" step="1" value="18">
+            </label>
+
+            <label class="check-row">
+              <input id="character-show-weight-grid" type="checkbox" checked>
+              <span>weight lattice grid</span>
+            </label>
+
+            <label class="check-row">
+              <input id="character-show-alcoves" type="checkbox" checked>
+              <span>\(p\)-alcove walls</span>
+            </label>
+
+            <label class="check-row">
+              <input id="character-show-shifted-box" type="checkbox" checked>
+              <span>shifted box</span>
+            </label>
+
+            <label class="check-row">
+              <input id="character-colour-by-coefficient" type="checkbox">
+              <span>colour by coefficient</span>
+            </label>
+
+            <label class="check-row">
+              <input id="character-show-coefficient-labels" type="checkbox">
+              <span>coefficient labels</span>
+            </label>
+
+            <label class="check-row">
+              <input id="character-show-formula" type="checkbox" checked>
+              <span>tilting character</span>
+            </label>
+
+            <button id="character-reset-view" type="button">Reset view</button>
+            <p class="control-warning">
+              Far-out tilting characters may compute slowly, especially for
+              larger primes or weights requiring several Donkin tensor-product
+              steps.
+            </p>
+          </aside>
+        </div>
+
+        <div class="tilting-details" id="character-details">
+          Move over a weight in the picture.
+        </div>
+      </section>
+
+      <section class="visualisation-section" id="partition-section">
+        <h2>Calculating three-row decomposition numbers</h2>
+        <p>
+          Once the relevant tilting character is known, the decomposition
+          number is just the coefficient of \(\Delta(\lambda)\) in \(T(\mu)\).
+          Thus they can be obtained directly after the tilting character is computed, as:
+          \[
+            [T(\mu):\Delta(\lambda)]=[S^\lambda:D^\mu].
+          \]
+        </p>
+        <p class="slider-explanation">
+          The sliders \(\lambda\) and \(\mu\) display three-row partitions and \(p\)-regular three-row partitions of \(n\) respectively, both in dominance order. The
+          \(\lambda\)-slider changes the Specht module \(S^\lambda\) while keeping
+          \(\mu\) fixed; the \(\mu\)-slider changes the simple module \(D^\mu\) while
+          keeping \(\lambda\) fixed. In both cases we only include labels
+          allowed by dominance order/unitriangularity.
+        </p>
+
+        <div class="single-result-layout">
+          <div class="controls partition-controls" aria-label="Partition controls">
+            <label>
+              Prime \(p\)
+              <select id="partition-prime-select">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+                <option value="13">13</option>
+              </select>
+            </label>
+
+            <label>
+              Specht label \(\lambda\)
+              <input id="partition-lambda-input" type="text" value="8,2,1">
+              <input id="partition-lambda-slider" type="range" min="0" max="0" step="1" value="0">
+              <div id="partition-lambda-slider-ticks" class="slider-ticks" aria-hidden="true"></div>
+            </label>
+
+            <div id="partition-lambda-slider-readout" class="control-readout">
+              Vary \(\lambda\) with \(\mu\) fixed.
+            </div>
+
+            <label>
+              Simple label \(\mu\)
+              <input id="partition-mu-input" type="text" value="11,0,0">
+              <input id="partition-mu-slider" type="range" min="0" max="0" step="1" value="0">
+              <div id="partition-mu-slider-ticks" class="slider-ticks" aria-hidden="true"></div>
+            </label>
+
+            <div id="partition-mu-slider-readout" class="control-readout">
+              Vary \(\mu\) with \(\lambda\) fixed.
+            </div>
+          </div>
+
+          <div class="tilting-details" id="partition-details">
+            Enter partitions and press Enter.
+          </div>
+        </div>
+
+        <h3>Three-row decomposition matrix</h3>
+        <p>
+          For small \(n\) and field of characteristic \(p\), this computes the decomposition matrix for
+          \(S_n\) when restricted to \(3\)-row partitions. 
+          Rows are partitions of \(n\) and columns are \(p\)-regular partitions of \(n\), both in
+          dominance order. 
+          A given entry with row \(\lambda\) and column \(\mu\) represents the decomposition number \([S^\lambda: D^\mu]\). 
+          Entry tooltips report whether Billiards-dependent results are verified with \(p\)-canonical basis computations or conjectural.
+          A question mark means missing data or an out-of-range dependency, not zero.
+        </p>
+
+        <div class="single-result-layout matrix-result-layout">
+          <div class="controls partition-controls" aria-label="Matrix controls">
+            <label>
+              Prime \(p\)
+              <select id="matrix-prime-select">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+                <option value="13">13</option>
+              </select>
+            </label>
+
+            <label>
+              \(n\)
+              <input id="matrix-n-input" type="number" min="1" max="30" value="11">
+            </label>
+
+            <button id="matrix-compute" type="button">Compute matrix</button>
+          </div>
+
+          <div class="tilting-details matrix-details">
+            <div id="matrix-fixed-readout">Choose \(p\) and \(n\).</div>
+            <div id="matrix-output" class="matrix-output">
+              Choose \(n\) and compute the three-row matrix.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="visualisation-section" id="billiards-section">
+        <h2>Billiards wall dynamics</h2>
+        <p>
+          The formula for conjectural \(p\)-canonical basis elements 
+          \({}^p \zeta_i\)
+          in terms of the canonical basis \(\underline{N}_x\) is as follows:
+
+          \[{}^p \zeta_i := \underline{n}_{x_i} + \sum_{(\mu, n(v^k)) \in \tilde{Z}, n \in \{i, i-1, i-2\}}
+           \varphi(v^k) \underline{n}_{x^s_\mu}.\]
+        </p>
+
+        <p>
+          Here, \(\tilde{Z}\) consists of tuples \((\mu, n(v^k))\) where \(\mu\) are weights of \(SL_3\). We can represent each \(n(v^k)\)
+          as "labels" of a weight \(\mu\) on the weight lattice of \(SL_3\). The formula above essentially encodes each label as a "triple" 
+          of canonical basis elements, such that each label \(n(v^k)\) corresponds to a canonical basis element in \({}^p \zeta_i\)
+          for \(i = n, n+1, n+2\). 
+          
+        </p>
+
+        <p>
+          The billiards conjecture calculates this \(\tilde{Z}\) through a \(3\)-step algorithm on the dominant
+          weight lattice of \(SL_3\). The name of the billiards conjecture comes from how 
+          the 3rd step of this dynamical algorithm resembles the bouncing of billiard balls
+          in a triangular grid.
+          We use Jensen's corrected merging rule <a class="citation" href="#ref-j">[J]</a>.
+        </p>
+
+        <p>
+          The following visualisation shows how this dynamical algorithm determines 
+          conjectural \(p\)-canonical basis elements on the wall.
+          At time \(i\), the bright
+          points are exactly the labels \(i,i-1,i-2\) that contribute to
+          \({}^p \zeta_i\). When animated, you can see the "billiards"-like behavior of the algorithm.
+        </p>
+
+        <div class="range-layout">
+          <figure class="visualisation-frame">
+            <canvas id="billiards-canvas" width="1100" height="760"></canvas>
+            <figcaption id="billiards-caption">
+              Use the wall-index slider or press play.
+            </figcaption>
+          </figure>
+
+          <aside class="controls" aria-label="Billiards dynamics controls">
+            <label>
+              Prime \(p\)
+              <select id="billiards-prime-select">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+                <option value="13">13</option>
+              </select>
+            </label>
+
+            <label>
+              Movie length
+              <input id="billiards-max-label" type="range" min="1" max="800" value="23">
+              <input id="billiards-max-label-number" type="number" min="1" max="3000" step="10" value="23">
+            </label>
+
+            <label>
+              Wall index \(i\)
+              <input id="billiards-wall-index" type="range" min="0" max="23" value="21">
+              <input id="billiards-wall-index-number" type="number" min="0" max="3000" step="1" value="21">
+            </label>
+
+            <label>
+              Animation speed
+              <input id="billiards-speed" type="range" min="120" max="1200" value="1020">
+              <span class="slider-endpoints"><span>Slow</span><span>Fast</span></span>
+              <span id="billiards-speed-value">300 ms</span>
+            </label>
+
+            <label class="check-row">
+              <input id="billiards-show-wall-graph" type="checkbox">
+              <span>wall graph</span>
+            </label>
+
+            <label class="check-row">
+              <input id="billiards-show-all" type="checkbox">
+              <span>history</span>
+            </label>
+
+            <label class="check-row">
+              <input id="billiards-show-labels" type="checkbox">
+              <span>labels</span>
+            </label>
+
+            <label class="check-row">
+              <input id="billiards-power-size-mode" type="checkbox" checked>
+              <span>\(v\)-power sizes and heatmap</span>
+            </label>
+
+            <label class="check-row">
+              <input id="billiards-show-details" type="checkbox" checked>
+              <span>explanation</span>
+            </label>
+
+            <button id="billiards-play" type="button">Play</button>
+            <button id="billiards-reset-view" type="button">Reset view</button>
+          </aside>
+        </div>
+
+        <div class="legend" id="billiards-legend"></div>
+        <div class="readout" id="billiards-readout">Move over a labelled point.</div>
+        <div class="tilting-details" id="billiards-details">
+          Use the controls to inspect the wall dynamics.
+        </div>
+      </section>
+
+      <section class="visualisation-section method-note" id="references" aria-labelledby="references-title">
+        <h2 id="references-title">References</h2>
+        <dl class="reference-list">
+          <div id="ref-d" tabindex="-1">
+            <dt>[D]</dt>
+            <dd>
+              Stephen Donkin.
+              <cite><a href="https://doi.org/10.1007/BF02571640">On tilting modules for algebraic groups.</a></cite>
+              Mathematische Zeitschrift 212 (1993), 39&ndash;60.
+            </dd>
+          </div>
+          <div id="ref-e" tabindex="-1">
+            <dt>[E]</dt>
+            <dd>Karin Erdmann. <cite>Decomposition Numbers for Symmetric Groups and Composition Factors of Weyl Modules.</cite> Journal of Algebra 180 (1996), 316-320.</dd>
+          </div>
+          <div id="ref-lw" tabindex="-1">
+            <dt>[LW]</dt>
+            <dd>
+              George Lusztig and Geordie Williamson.
+              <cite><a href="https://doi.org/10.3842/SIGMA.2018.015">Billiards and Tilting Characters for \(\mathrm{SL}_3\).</a></cite>
+              SIGMA 14 (2018), article 015, 22 pages.
+              <a href="https://arxiv.org/abs/1703.05898">arXiv:1703.05898</a>.
+            </dd>
+          </div>
+          <div id="ref-j" tabindex="-1">
+            <dt>[J]</dt>
+            <dd>
+              Lars Thorge Jensen.
+              <cite><a href="https://arxiv.org/abs/2105.04665">Correction of the Lusztig-Williamson Billiards Conjecture.</a></cite>
+              Preprint, arXiv:2105.04665 (2021), 15 pages.
+            </dd>
+          </div>
+          <div id="ref-rw15" tabindex="-1">
+            <dt>[RW15]</dt>
+            <dd>
+              Simon Riche and Geordie Williamson.
+              <cite><a href="https://doi.org/10.24033/ast.1043">Tilting modules and the \(p\)-canonical basis.</a></cite>
+              Ast&eacute;risque 397, Soci&eacute;t&eacute; Math&eacute;matique de France, 2018.
+              Preprint (2015): <a href="https://arxiv.org/abs/1512.08296">arXiv:1512.08296</a>.
+            </dd>
+          </div>
+          <div id="ref-asloc" tabindex="-1">
+            <dt>[ASLoc]</dt>
+            <dd>
+              Joel Gibson, Lars Thorge Jensen, and Geordie Williamson.
+              <cite><a href="https://github.com/joelgibson/ASLoc">ASLoc.</a></cite>
+              A Magma package for working with the localised diagrammatic category and calculating
+              the \(p\)-canonical basis of Hecke algebras. Software, 2022.
+            </dd>
+          </div>
+          <div id="ref-gjw23" tabindex="-1">
+            <dt>[GJW23]</dt>
+            <dd>
+              Joel Gibson, Lars Thorge Jensen, and Geordie Williamson.
+              <cite><a href="https://doi.org/10.1007/s00031-023-09799-z">Calculating the \(p\)-canonical basis of Hecke algebras.</a></cite>
+              Transformation Groups 28 (2023), 1121&ndash;1148.
+            </dd>
+          </div>
+          <div id="ref-liu" tabindex="-1">
+            <dt>[Liu]</dt>
+            <dd>Maxwell Liu. <cite><a href="documents/maxwell-liu-honours-thesis.pdf">Calculating decomposition numbers using the billiards conjecture.</a></cite>
+              Honours thesis, University of Sydney.</dd>
+          </div>
+        </dl>
+      </section>
+    </article>
+    <footer class="method-note" id="ai-disclaimer">
+      <p>
+        The visualisations are motivated by the
+        <a href="https://www.jgibson.id.au/lievis/">Lievis online software</a>
+        by Joel Gibson, which we encourage you to check out!
+        The typography and layout follow Lievis; the bundled KaTeX and web fonts
+        were obtained from its source distribution.
+        <a href="THIRD_PARTY_NOTICES.txt">Third-party notices and licences</a>.
+      </p>
+      <p>
+        We used ChatGPT (5.5,5.6 and 6) for help with generating the visualisations on this page.
+        All text was written by us and AI was only used for proofreading.
+        We remain responsible for the content of this page.
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
